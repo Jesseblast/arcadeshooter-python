@@ -1,0 +1,1 @@
+Teen yksinkertaisen arcade shooterin käyttämällä Python Arcade Libraryä. Pelissä ammutaan ylhäältä tulevia vihollisia avaruusaluksella, ja jokaisesta tuhotusta vihollisesta saa pisteen. Peli päättyy, kun vihollinen saavuttaa pelin alaruudun.
