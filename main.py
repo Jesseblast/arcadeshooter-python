@@ -17,7 +17,7 @@ class Game(arcade.Window):
         self.bullet_list = None
         self.alien_list = None
         self.score = None
-        self.game_over = None
+        self.game_over: bool = None
 
         self.time_elapsed: float = 0.0
         self.player_speed: float = 2.0
@@ -32,6 +32,7 @@ class Game(arcade.Window):
         self.player_sprite = arcade.Sprite("ship.png", SPRITE_SCALE_FACTOR)
         self.player_sprite.center_x = self.player_sprite.center_y = 50
 
+        # Make list for bullets and aliens (because we have many of both of them)
         self.bullet_list = arcade.SpriteList()
         self.alien_list = arcade.SpriteList()
 
@@ -39,6 +40,8 @@ class Game(arcade.Window):
         self.game_over: bool = False
 
     def on_key_press(self, symbol: int, modifiers: int):
+
+        # Player controls
         if symbol == arcade.key.LEFT or symbol == arcade.key.A:
             self.player_sprite.change_x = -self.player_speed
         elif symbol == arcade.key.RIGHT or symbol == arcade.key.D:
@@ -59,9 +62,9 @@ class Game(arcade.Window):
 
     def on_draw(self):
         arcade.start_render()
-        self.player_sprite.draw()
-        self.bullet_list.draw()
-        self.alien_list.draw()
+        self.player_sprite.draw()   # Draw player
+        self.bullet_list.draw()     # Draw all bullets
+        self.alien_list.draw()      # Draw all aliens
 
         # Draw game score
         if not self.game_over:
@@ -81,7 +84,7 @@ class Game(arcade.Window):
         self.player_speed += delta_time * 0.1
         self.alien_speed += delta_time * 0.1
         self.bullet_speed += delta_time * 0.1 * 3
-        self.alien_spawn_rate -= delta_time * 0.1 * 0.25
+        self.alien_spawn_rate -= delta_time * 0.1 * 0.333
 
         # Keep player's ship within the screen limits
         if self.player_sprite.center_x < 24:
@@ -89,7 +92,7 @@ class Game(arcade.Window):
         elif self.player_sprite.center_x > SCREEN_WIDTH - 24:
             self.player_sprite.center_x = SCREEN_WIDTH - 24
 
-        # Spawn alien-enemies
+        # Spawn aliens
         self.time_elapsed += delta_time
         if self.time_elapsed > self.alien_spawn_rate:
             alien_sprite = arcade.Sprite("alien.png", SPRITE_SCALE_FACTOR)
@@ -106,9 +109,9 @@ class Game(arcade.Window):
 
         # Loop through bullets
         for bullet in self.bullet_list:
-
-            # Bullet hit enemy
             collisions = arcade.check_for_collision_with_list(bullet, self.alien_list)
+
+            # When bullet hit enemy
             if collisions:
                 bullet.remove_from_sprite_lists()
 
@@ -116,7 +119,7 @@ class Game(arcade.Window):
                 alien.remove_from_sprite_lists()
                 self.score += 1
 
-            # Off screen
+            # Delete bullet that fly off screen
             if bullet.center_y > SCREEN_HEIGHT:
                 bullet.remove_from_sprite_lists()
 
@@ -124,8 +127,6 @@ class Game(arcade.Window):
         for alien in self.alien_list:
             if alien.center_y < 32:
                 self.game_over = True
-
-
 
 
 # Main game function
